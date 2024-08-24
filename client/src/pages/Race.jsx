@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Typing from '../components/Typing/Typing';
 import axios from 'axios';
 import NavBar from '../components/NavBar/NavBar';
-import Footer from '../components/Footer/Footer';
 
 
 export default function Race() {
@@ -46,10 +45,9 @@ export default function Race() {
           <Typing isUserSignedIn={auth}/>
         </main>
         :
-        <div>
-          <h1>{error}</h1>
-          <h1>Unauthorized</h1>
-        </div>
+        <main id='loader-container'>
+          <div className="loader"></div>
+        </main>
       }
     </>
   )

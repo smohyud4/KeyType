@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {getGameText, calculateWPM} from '../../utils/typing'
+import {getGameText, mapGameText, calculateWPM} from '../../utils/typing'
 import axios from 'axios';
 import Stats from '../Stats/Stats';
 import './Typing.css';
@@ -14,6 +14,7 @@ export default function Typing({isUserSignedIn}) {
 
   const [inProgress, setInProgress] = useState(false);
   const [statsLoaded, setStatsLoaded] = useState(false);
+  const [seeCurrStats, setSeeCurrStats] = useState(false);
   const [statShow, setStatShow] = useState(false);
   const [text, setText] = useState("Press start to play!".split('').map(char => ({character: char, currState: ''})));
   const [currWpm, setCurrWpm] = useState(0);
@@ -108,29 +109,7 @@ export default function Typing({isUserSignedIn}) {
         return;
       }
       const facts = response.data.text;
-      let text = "";
-      const punctuation = ['.', '!', '?'];
-
-      for (let i = 0; i < facts.length; i++) {
-        let fact = facts[i].fact;
-        let end = fact[fact.length-1];
-        text += fact;
-
-        if (!punctuation.includes(end) && end !== '"') 
-          text += punctuation[Math.floor(Math.random() * punctuation.length)]; 
-        if (i !== facts.length-1) 
-          text += ' ';
-      }
-      
-      const textArray = Array.from(text);
-      const converted = textArray.map((char, index) => {
-        if (char === '|' || char === '~' || char === '`' || char === '@' || char === '\\') { 
-          return { character: ' ', currState: ''};
-        }
-        if (index === 0) return { character: char, currState: 'current'};
-        return { character: char, currState: ''}
-      });
-      setText(converted);
+      setText(mapGameText(facts));
     }
     catch (error) {
       console.log(error);
@@ -179,11 +158,13 @@ export default function Typing({isUserSignedIn}) {
     wrongRef.current = 0;
     setStartTime(null);
     setStatShow(true);
+    setSeeCurrStats(false);
   } 
 
   function handleKeyDown(event) {
     event.preventDefault(); // Make sure you don't scroll down with a space
     const key = event.key;
+    if (key === "Backspace") return;
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
@@ -241,8 +222,14 @@ export default function Typing({isUserSignedIn}) {
             </span>
           ))}
           <hr/> 
-          <p>WPM: {Math.round(currWpm)}</p>
-          <p>Accuracy: {currAccuracy.toFixed(2)}%</p>
+          <p>WPM: {seeCurrStats ? Math.round(currWpm) : '--'}</p>
+          <p>Accuracy: {seeCurrStats ? `${currAccuracy.toFixed(2)}%` : '--'}</p>
+          <input
+            type="checkbox"
+            name="currStats"
+            onChange={() => setSeeCurrStats(!seeCurrStats)}
+            title='Show current stats'
+          />
         </section>
       ) : (
         statsLoaded || !isUserSignedIn ? (
@@ -259,7 +246,11 @@ export default function Typing({isUserSignedIn}) {
         )
       )}
       </div>
-      {!inProgress && <button id='start-button' onClick={startGame}>Start</button>}
+      {!inProgress && 
+        <button id='start-button' onClick={startGame}>
+          {statShow ? 'Race Again' : 'Start'}
+        </button>
+      }
     </>
   );
 } 

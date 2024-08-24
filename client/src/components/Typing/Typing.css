@@ -49,21 +49,26 @@
 }
 
 #start-button {
-    scale: 2;
     display: block;
     margin-left: auto;
     margin-right: auto;
     border: none;
     background: rgb(97, 97, 196);
+    height: 40px;
     color: rgb(250, 249, 249);
-    font-size: 14px;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 10px;
     margin-bottom: 5px;
+    font-size: 1.5rem;
+    padding: 0px 20px;
 }
 
 #loading {
     text-align: center;
+}
+
+.wrapper-typing input[type="checkbox"] {
+  outline: none;
 }
 
 .loader {

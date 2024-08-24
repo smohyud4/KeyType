@@ -12,6 +12,7 @@ export default function PracticeTyping() {
   const [inputData, setInputData] = useState({key1: '', key2: '', error: '', capitals: false}); 
   const [inProgress, setInProgress] = useState(false);
   const [statShow, setStatShow] = useState(false);
+  const [seeCurrStats, setSeeCurrStats] = useState(false);
   const [text, setText] = useState([]);
   const [currWpm, setCurrWpm] = useState(0);
   const [currAccuracy, setCurrAccuracy] = useState(0);
@@ -111,6 +112,7 @@ export default function PracticeTyping() {
     wrongRef.current = 0;
     setStartTime(null);
     setStatShow(true);
+    setSeeCurrStats(false);
   } 
 
   function handleKeyDown(event) {
@@ -119,7 +121,6 @@ export default function PracticeTyping() {
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
-      console.log(now);
       startTimeRef.current = now;
       setStartTime(now);
     }
@@ -134,7 +135,6 @@ export default function PracticeTyping() {
    
       correctRef.current = false;
       pointerRef.current += 1;
-      console.log('pointerRef', pointerRef.current);
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
       setCurrAccuracy(accuracy);
 
@@ -175,8 +175,14 @@ export default function PracticeTyping() {
             </span>
           ))}
           <hr/>
-          <p>WPM: {Math.round(currWpm)}</p>
-          <p>Accuracy: {currAccuracy.toFixed(2)}%</p>
+          <p>WPM: {seeCurrStats ? Math.round(currWpm) : '--'}</p>
+          <p>Accuracy: {seeCurrStats ? `${currAccuracy.toFixed(2)}%` : '--'}</p>
+          <input
+            type="checkbox"
+            name="currStats"
+            onChange={() => setSeeCurrStats(!seeCurrStats)}
+            title='Show current stats'
+          />
         </div>
       ) : (
         <Stats 
@@ -189,7 +195,11 @@ export default function PracticeTyping() {
         </Stats>
       )}
       </div>
-      {!inProgress && <button id='start-button' onClick={startGame}>Start</button>}
+      {!inProgress && 
+        <button id='start-button' onClick={startGame}>
+          {statShow ? 'Race Again' : 'Start'}
+        </button>
+      }
     </>
   );
 } 

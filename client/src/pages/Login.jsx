@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [typeReveal, setTypeReveal] = useState('password');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   function revealPassword(event) {
@@ -30,9 +31,11 @@ export default function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
+      setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL;
       const response = await axios.post(`${apiUrl}/login`, {email, password}, {withCredentials: true});
       if (response.data.error) {
+        setLoading(false);
         setError(response.data.error);
         return;
       }
@@ -42,6 +45,7 @@ export default function Login() {
       navigate('/account');
     }
     catch (error) {
+      setLoading(false);
       console.log(error);
     }
   }
@@ -81,7 +85,9 @@ export default function Login() {
             </div>
               {error && <p>{error}</p>}
               <div className='input-box'>
-                <button className='submit-button' type='submit'>Sign In</button>
+                <button className='submit-button' type='submit'>
+                  {loading ? <div className='button-loader'></div> : 'Login'}
+                </button>
               </div>
             </form>
         </div>
