@@ -15,6 +15,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [typeReveal, setTypeReveal] = useState('password');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   function validateEmail(email) {
@@ -63,11 +64,13 @@ export default function Register() {
         setError('Invalid Email');
         return;
       }
+      setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL;
       const response = await axios.post(`${apiUrl}/register`, {username, email, password});
       console.log(response.data);
       if (response.data.error) {
         setError(response.data.error);
+        setLoading(false);
         return;
       }
       setEmail('');
@@ -76,6 +79,7 @@ export default function Register() {
     }
     catch (error) {
       setError('An error occurred');
+      setLoading(false);
       console.log(error);
     }
   }
@@ -127,7 +131,9 @@ export default function Register() {
             </div>
             {error && <p>{error}</p>}
             <div className='input-box'>
-              <button className='submit-button' type='submit'>Sign Up</button>
+              <button className='submit-button' type='submit'>
+                {loading ? <div className='button-loader'></div> : 'Sign Up'}
+              </button>
             </div>
           </form>
         </div>
