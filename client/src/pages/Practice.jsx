@@ -47,10 +47,9 @@ export default function Race() {
           <PracticeTyping/>
         </main>
         :
-        <div>
-          <h1>{error}</h1>
-          <h1>Unauthorized</h1>
-        </div>
+        <main id='loader-container'>
+          <div className="loader"></div>
+        </main>
       }
     </>
   )

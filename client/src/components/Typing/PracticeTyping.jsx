@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useState, useEffect, useRef} from 'react';
-import {calculateWPM, validateInput, generateText} from '../../utils/typing'
+import {generate} from 'random-words';
+import {buildAccuracyMap, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
 import './Typing.css';
@@ -9,7 +10,7 @@ import './Typing.css';
 // eslint-disable-next-line react/prop-types
 export default function PracticeTyping() {
 
-  const [inputData, setInputData] = useState({key1: '', key2: '', error: '', capitals: false}); 
+  const [inputData, setInputData] = useState({key1: '', key2: '', error: '', capitals: false, dictionary: false}); 
   const [inProgress, setInProgress] = useState(false);
   const [statShow, setStatShow] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
@@ -71,20 +72,11 @@ export default function PracticeTyping() {
   }, [startTime]);  
 
   function startGame() {
-    const error = validateInput(inputData.key1, inputData.key2);
-    if (error == "None") {
-      let temp = {};
-      
-      temp[inputData.key1] = {correct: 0, total: 0};
-      temp[inputData.key2] = {correct: 0, total: 0};
-      temp[' '] = {correct: 0, total: 0};
+    let error = null;
+    if (!inputData.dictionary) error = validateInput(inputData.key1, inputData.key2);
+    if (error == "None" || error == null) {
 
-      if (inputData.capitals) {
-        temp[inputData.key1.toUpperCase()] = {correct: 0, total: 0};
-        temp[inputData.key2.toUpperCase()] = {correct: 0, total: 0};
-      }
-
-      setCharAccuracies(temp); 
+      setCharAccuracies(buildAccuracyMap()); 
 
       setInProgress(true);
       setStatShow(false);
@@ -93,7 +85,10 @@ export default function PracticeTyping() {
       setCurrAccuracy(0);
       setInputData({...inputData, error: ''});
 
-      const array = Array.from(generateText(inputData.key1, inputData.key2, inputData.capitals));
+      const array = !inputData.dictionary
+        ?  Array.from(generatePracticeText(inputData.key1, inputData.key2, inputData.capitals))
+        :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
+        
       setText(array.map((char, index) => {
         if (index == 0) return { character: char, currState: 'current'};
         return { character: char, currState: ''}
@@ -165,7 +160,7 @@ export default function PracticeTyping() {
   
   return (
     <>
-      <TypingInput data={inputData} setData={setInputData} />
+      {(!inProgress) && <TypingInput data={inputData} setData={setInputData} />}
       <div className='container-typing'>
       {!statShow ? (
         <div className='wrapper-typing'>
