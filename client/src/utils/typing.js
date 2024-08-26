@@ -15,6 +15,17 @@ const TEXTS = [
     "The best way to predict the future is to create it."
 ]; 
 
+export const characters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()[]{}_+=-;':,.<>/?" `
+
+export function buildAccuracyMap() {
+    const accuracies = {};
+    for (const char of characters) {
+      accuracies[char] = {correct: 0, total: 0};
+    }
+
+    return accuracies;
+}
+
 export function getGameText() {
     const selectedText = TEXTS[Math.floor(Math.random() * TEXTS.length)];
     const textArray = Array.from(selectedText);
@@ -62,9 +73,6 @@ export function calculateWPM(start, end, totalChars) {
 }
 
 export function validateInput(key1, key2) {
-    
-    const characters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()[]{}_+=-;':,.<>/?" `
-
     if (key1 == '' || key2 == '') 
         return "Characters must not be empty";
 
@@ -77,7 +85,7 @@ export function validateInput(key1, key2) {
     return "None";
 }
 
-export function generateText(key1, key2, capitals) {
+export function generatePracticeText(key1, key2, capitals) {
     let str = "";
     const words = Math.floor(Math.random() * 6) + 20;
 

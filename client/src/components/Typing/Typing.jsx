@@ -1,13 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {getGameText, mapGameText, calculateWPM} from '../../utils/typing'
+import {buildAccuracyMap, getGameText, mapGameText, calculateWPM} from '../../utils/typing'
 import axios from 'axios';
 import Stats from '../Stats/Stats';
 import './Typing.css';
-
-
-const characters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()[]{}_+=-;':,.<>/?" `;
 
 // eslint-disable-next-line react/prop-types
 export default function Typing({isUserSignedIn}) {
@@ -118,11 +115,7 @@ export default function Typing({isUserSignedIn}) {
   }
 
   function init() {
-    const temp = {};
-    for (const char of characters) {
-      temp[char] = {correct: 0, total: 0};
-    }
-    setCharAccuracies(temp);
+    setCharAccuracies(buildAccuracyMap());
     setCurrWpm(0);
     setCurrAccuracy(0);
     setInProgress(true);
