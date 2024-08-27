@@ -165,7 +165,8 @@ export default function Typing({isUserSignedIn}) {
       setStartTime(now);
     }
 
-    let char = text[pointerRef.current];
+    let newText = [...text];
+    let char = newText[pointerRef.current];
 
     if (key === text[pointerRef.current].character) {
       char.currState = "correct";
@@ -178,7 +179,8 @@ export default function Typing({isUserSignedIn}) {
       setCurrAccuracy(accuracy);
 
       if (pointerRef.current < text.length) {
-        text[pointerRef.current].currState = "current";
+        newText[pointerRef.current].currState = "current";
+        setText(newText);
       }
       else {
         const newEndTime = new Date();
@@ -197,6 +199,7 @@ export default function Typing({isUserSignedIn}) {
         }
 
         char.currState = "incorrect";
+        setText(newText);
     }
   }
 
