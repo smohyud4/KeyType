@@ -113,6 +113,7 @@ export default function PracticeTyping() {
   function handleKeyDown(event) {
     event.preventDefault(); // Make sure you don't scroll down with a space
     const key = event.key;
+    if (key === "Backspace") return;
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
