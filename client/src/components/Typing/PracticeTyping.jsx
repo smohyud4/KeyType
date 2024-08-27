@@ -113,6 +113,7 @@ export default function PracticeTyping() {
   function handleKeyDown(event) {
     event.preventDefault(); // Make sure you don't scroll down with a space
     const key = event.key;
+    if (key === "Backspace") return;
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
@@ -120,8 +121,8 @@ export default function PracticeTyping() {
       setStartTime(now);
     }
 
-    let newText = [...text];
-    let char = newText[pointerRef.current];
+
+    let char = text[pointerRef.current];
 
     if (key === text[pointerRef.current].character) {
       char.currState = "correct";
@@ -134,8 +135,7 @@ export default function PracticeTyping() {
       setCurrAccuracy(accuracy);
 
       if (pointerRef.current < text.length) {
-        newText[pointerRef.current].currState = "current";
-        setText(newText);
+        text[pointerRef.current].currState = "current";
       }
       else {
         const newEndTime = new Date();
@@ -154,7 +154,6 @@ export default function PracticeTyping() {
         }
 
         char.currState = "incorrect";
-        setText(newText);
     }
   }
   
