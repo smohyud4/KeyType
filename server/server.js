@@ -94,9 +94,9 @@ app.get("/account", verifyUser, async (req, res) => {
     }
 });
 
-app.get("/random-text", verifyUser, async (req, res) => {
-   
-    const limit = Math.random() < 0.6 ? 2 : 3;
+app.post("/practice-text", async (req, res) => {
+    const db = await pool.connect();
+    const limit = 100;
     const options = {
         method: 'GET',
         url: 'https://api.api-ninjas.com/v1/facts?limit=' + limit,
@@ -107,11 +107,37 @@ app.get("/random-text", verifyUser, async (req, res) => {
 
     try {
         const response = await axios.request(options);
-        res.json({text: response.data});
+        for (let i=0; i < response.data.length; i++) {  
+            const text = response.data[i].fact;
+            await db.query("INSERT INTO prompts (prompt) VALUES ($1)", [text]);
+        }
+        res.json({text: "Success"});
     } 
     catch (error) {
         console.error(error);
         res.status(500).json({error: "Error fetching text"});
+    }
+    finally {
+        db.release();
+    }
+
+});
+
+app.get("/random-text", verifyUser, async (req, res) => {
+   
+    const db = await pool.connect();
+    const limit = Math.random() < 0.6 ? 2 : 3;
+
+    try {
+        const response = await db.query("SELECT prompt FROM prompts ORDER BY RANDOM() LIMIT $1", [limit]);
+        res.json({text: response.rows});
+    } 
+    catch (error) {
+        console.error(error);
+        res.status(500).json({error: "Error fetching text"});
+    }
+    finally {
+        db.release();
     }
 });
 
