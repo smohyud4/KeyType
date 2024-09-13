@@ -90,37 +90,8 @@ app.get("/account", verifyUser, async (req, res) => {
         res.status(500).json({error: "Error fetching user data"});
     } 
     finally {
-        db.release();  // Always release the client
+        db.release();  
     }
-});
-
-app.post("/practice-text", async (req, res) => {
-    const db = await pool.connect();
-    const limit = 100;
-    const options = {
-        method: 'GET',
-        url: 'https://api.api-ninjas.com/v1/facts?limit=' + limit,
-        headers: {
-            'X-Api-Key': process.env.API_KEY
-        }
-    };
-
-    try {
-        const response = await axios.request(options);
-        for (let i=0; i < response.data.length; i++) {  
-            const text = response.data[i].fact;
-            await db.query("INSERT INTO prompts (prompt) VALUES ($1)", [text]);
-        }
-        res.json({text: "Success"});
-    } 
-    catch (error) {
-        console.error(error);
-        res.status(500).json({error: "Error fetching text"});
-    }
-    finally {
-        db.release();
-    }
-
 });
 
 app.get("/random-text", verifyUser, async (req, res) => {
