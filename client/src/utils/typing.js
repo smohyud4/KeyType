@@ -42,7 +42,7 @@ export function mapGameText(facts) {
     const punctuation = ['.', '!', '?'];
 
     for (let i = 0; i < facts.length; i++) {
-      let fact = facts[i].fact;
+      let fact = facts[i].prompt;
       let end = fact[fact.length-1];
       text += fact;
 
