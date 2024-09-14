@@ -33,7 +33,7 @@
     background-color: #555;
 }
   
-.nav li:hover {
+.nav .nav-link:hover {
     color: rgb(226, 226, 236);
     text-shadow: 0 0 10px rgba(243, 243, 250, 0.8); /* Glowing effect */
     transform: scale(1.05); /* Slight zoom effect */
@@ -49,6 +49,18 @@
     border-radius: 5px;
     cursor: pointer;
     margin-top: 1.5rem;
+}
+
+.nav button:hover {
+    background-color: #777;
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+#register-button {
+    background-color: hsl(240, 46%, 57%);
+    font-size: 1rem;
 }
 
 .nav button > div {

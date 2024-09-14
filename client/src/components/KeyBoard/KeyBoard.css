@@ -27,9 +27,6 @@
   min-width: 50px;
   border: solid grey 1px;
   font-size: 100%;
-  box-shadow: 
-  2px 2px 16px 0 rgba(0, 0, 0, 0.25),
-  -2px -2px 12px 0 rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,6 +77,9 @@ li:hover p {
 
 #shiftButton {
   width: 15%;
+  box-shadow: 
+  2px 2px 16px 0 rgba(0, 0, 0, 0.25),
+  -2px -2px 12px 0 rgba(255, 255, 255, 0.3);
 }
 
 

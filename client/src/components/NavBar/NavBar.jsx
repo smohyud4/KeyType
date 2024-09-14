@@ -29,9 +29,9 @@ export default function Navbar({isUserSignedIn, user}) {
         <ul>
             {isUserSignedIn ? (
                 <>
-                <li><a href='/account'>Welcome, {user}</a></li>
-                <li><a href='/race'>Race</a></li>
-                <li><a href='/practice'>Practice</a></li>
+                <li className="nav-link"><a href='/account'>Welcome, {user}</a></li>
+                <li className="nav-link"><a href='/race'>Race</a></li>
+                <li className="nav-link"><a href='/practice'>Practice</a></li>
                 <li>
                   <button onClick={handleSignOut}>
                     {loading ? <div className="button-loader"></div> : 'Sign out'}
@@ -40,8 +40,12 @@ export default function Navbar({isUserSignedIn, user}) {
                 </>
             ) : (
                 <>
-                <li><a href='/login'>Login</a></li>
-                <li><a href='/register'>Sign up</a></li>
+                <li>
+                  <button id="register-button">
+                    <a href='/register'>Sign up</a>
+                  </button>
+                </li>
+                <li className="nav-link"><a href='/login'>Login</a></li>
                 </>
             )}
         </ul>

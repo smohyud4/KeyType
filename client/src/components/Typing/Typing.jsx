@@ -186,7 +186,11 @@ export default function Typing({isUserSignedIn}) {
         const newEndTime = new Date();
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
-        wpmHistoryRef.current.push({name: wpmHistoryRef.current.length, WPM: wpm, "WPM/s": 0});
+        wpmHistoryRef.current.push({
+          name: wpmHistoryRef.current.length, 
+          WPM: wpm, 
+          "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
+        });
         resetGame();
       }
     
