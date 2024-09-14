@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {buildAccuracyMap, getGameText, mapGameText, calculateWPM} from '../../utils/typing'
+import {buildAccuracyMap, getGameText, mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
 import axios from 'axios';
 import Stats from '../Stats/Stats';
 import './Typing.css';
@@ -165,11 +165,7 @@ export default function Typing({isUserSignedIn}) {
       setStartTime(now);
     }
 
-    let newText = [...text];
-    let char = newText[pointerRef.current];
-
     if (key === text[pointerRef.current].character) {
-      char.currState = "correct";
      
       updateCharAccuracies(key, true);
    
@@ -178,11 +174,7 @@ export default function Typing({isUserSignedIn}) {
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
       setCurrAccuracy(accuracy);
 
-      if (pointerRef.current < text.length) {
-        newText[pointerRef.current].currState = "current";
-        setText(newText);
-      }
-      else {
+      if (pointerRef.current == text.length) {
         const newEndTime = new Date();
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
@@ -199,14 +191,11 @@ export default function Typing({isUserSignedIn}) {
         if (!correctRef.current) {
             wrongRef.current += 1;
             correctRef.current = true;
+            let char = text[pointerRef.current];
             updateCharAccuracies(char.character, false);
         }
-
-        char.currState = "incorrect";
-        setText(newText);
     }
   }
-
 
   return (
     <>
@@ -214,7 +203,11 @@ export default function Typing({isUserSignedIn}) {
       {!statShow ? (
         <section className='wrapper-typing'>
           {text.map((element, index) => (
-            <span key={index} id={index.toString()} className={element.currState}>
+            <span 
+              key={index} 
+              id={index.toString()} 
+              className={getCurrentState(pointerRef.current, index, correctRef.current)}
+            >
               {element.character}
             </span>
           ))}

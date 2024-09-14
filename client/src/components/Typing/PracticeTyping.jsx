@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useState, useEffect, useRef} from 'react';
 import {generate} from 'random-words';
-import {buildAccuracyMap, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
+import {buildAccuracyMap, getCurrentState, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
 import './Typing.css';
@@ -121,11 +121,7 @@ export default function PracticeTyping() {
       setStartTime(now);
     }
 
-    let newText = [...text];
-    let char = newText[pointerRef.current];
-
     if (key === text[pointerRef.current].character) {
-      char.currState = "correct";
      
       updateCharAccuracies(key, true);
    
@@ -134,15 +130,15 @@ export default function PracticeTyping() {
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
       setCurrAccuracy(accuracy);
 
-      if (pointerRef.current < text.length) {
-        newText[pointerRef.current].currState = "current";
-        setText(newText);
-      }
-      else {
+      if (pointerRef.current == text.length) {
         const newEndTime = new Date();
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
-        wpmHistoryRef.current.push({name: wpmHistoryRef.current.length, WPM: wpm, "WPM/s": 0});
         setCurrWpm(wpm);
+        wpmHistoryRef.current.push({
+          name: wpmHistoryRef.current.length, 
+          WPM: wpm, 
+          "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
+        });
         resetGame();
       }
     
@@ -151,11 +147,9 @@ export default function PracticeTyping() {
         if (!correctRef.current) {
             wrongRef.current += 1;
             correctRef.current = true;
+            let char = text[pointerRef.current];
             updateCharAccuracies(char.character, false);
         }
-
-        char.currState = "incorrect";
-        setText(newText);
     }
   }
   
@@ -166,7 +160,11 @@ export default function PracticeTyping() {
       {!statShow ? (
         <div className='wrapper-typing'>
           {text.map((element, index) => (
-            <span key={index} id={index.toString()} className={element.currState}>
+            <span 
+              key={index} 
+              id={index.toString()} 
+              className={getCurrentState(pointerRef.current, index, correctRef.current)}
+            >
               {element.character}
             </span>
           ))}

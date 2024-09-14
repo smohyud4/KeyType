@@ -63,8 +63,16 @@ export function mapGameText(facts) {
 
     return converted;
 }
-      
 
+export function getCurrentState(pointer, index, incorrect) {
+  if (index > pointer) return '';
+  if (index < pointer) return 'correct';
+  if (index === pointer) {
+    if (incorrect) return 'incorrect';
+    return 'current';
+  }
+} 
+      
 export function calculateWPM(start, end, totalChars) {
   const elapsedTimeInMinutes = (end - start) / 1000 / 60; // Convert milliseconds to minutes
   const totalWords = totalChars / 5; // Approximate words by dividing total characters by 5
