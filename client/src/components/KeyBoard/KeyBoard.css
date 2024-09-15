@@ -36,8 +36,14 @@
   margin: 5px;
 }
 
-.keyBoardContainer ul li:hover{
-    transform: scale(1.1);
+
+.keyBoardContainer .caps {
+  transform: scale(1);
+  border: solid #82ca9d 1px;
+}
+
+.keyBoardContainer .non-caps {
+  transform: scale(1.1);
 }
 
 .tooltip p {

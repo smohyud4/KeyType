@@ -27,10 +27,28 @@ export default function KeyBoard({
 
   const [caps, setCaps] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Shift') {
+        setCaps(prev => !prev);
+      }
+    };
+  
+    document.addEventListener('keyup', handleKeyDown);
+  
+    return () => {
+      document.removeEventListener('keyup', handleKeyDown);
+    };
+  }, []);
+
   return <>
     <div className="keyBoardContainer">
       <ul>
-        <li id="shiftButton" onClick={() => setCaps(prev => !prev)}>
+        <li 
+          id="shiftButton"
+          className={caps ? 'caps' : 'non-caps'}
+          onClick={() => setCaps(prev => !prev)}
+        >
           shift
         </li>
        </ul>
