@@ -206,7 +206,11 @@ export default function Typing({isUserSignedIn}) {
             <span 
               key={index} 
               id={index.toString()} 
-              className={getCurrentState(pointerRef.current, index, correctRef.current)}
+              className={
+                pointerRef.current === 0
+                ? element.currState
+                : getCurrentState(pointerRef.current, index, correctRef.current)
+              }
             >
               {element.character}
             </span>
