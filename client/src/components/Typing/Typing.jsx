@@ -86,7 +86,7 @@ export default function Typing({isUserSignedIn}) {
     return () => {
       document.removeEventListener('keydown', handleKeyDownWrapper, true);
     };
-  }, [pointerRef, inProgress]);
+  }, [inProgress]);
 
   useEffect(() => {
     if (inProgress) {
@@ -155,9 +155,10 @@ export default function Typing({isUserSignedIn}) {
   } 
 
   function handleKeyDown(event) {
-    event.preventDefault(); // Make sure you don't scroll down with a space
+
     const key = event.key;
     if (key === "Backspace") return;
+    if (key === ' '  || event.keyCode === 32) event.preventDefault();
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
@@ -206,11 +207,7 @@ export default function Typing({isUserSignedIn}) {
             <span 
               key={index} 
               id={index.toString()} 
-              className={
-                pointerRef.current === 0
-                ? element.currState
-                : getCurrentState(pointerRef.current, index, correctRef.current)
-              }
+              className={getCurrentState(pointerRef.current, index, correctRef.current)}
             >
               {element.character}
             </span>

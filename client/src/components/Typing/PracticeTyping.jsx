@@ -61,7 +61,7 @@ export default function PracticeTyping() {
     return () => {
       document.removeEventListener('keydown', handleKeyDownWrapper, true);
     };
-  }, [pointerRef, inProgress]);
+  }, [inProgress]);
 
   useEffect(() => {
     if (inProgress) {
@@ -111,9 +111,9 @@ export default function PracticeTyping() {
   } 
 
   function handleKeyDown(event) {
-    event.preventDefault(); // Make sure you don't scroll down with a space
     const key = event.key;
     if (key === "Backspace") return;
+    if (key === ' '  || event.keyCode === 32) event.preventDefault();
 
     if (!startTimeRef.current && key !== "Shift") {
       const now = new Date();
