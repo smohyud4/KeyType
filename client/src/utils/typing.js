@@ -1,3 +1,5 @@
+import prompts from './prompts.json';
+
 const TEXTS = [
     "There once was a man from nantucket.",
     "The quick brown fox jumps over the lazy dog.",
@@ -9,7 +11,6 @@ const TEXTS = [
     "Artificial Intelligence has profoundly influenced our everyday lives, and this influence continues to expand.",
     "What is the difference between right and wrong? Good and evil? Do these concepts exist on a spectrum? A powerful tool that can help guide these questions is ethics. At its core, ethics encompasses all facets of society, dictating what humans ought to do. For example, ethics provide the standards that impose reasonable obligations from common vices such as rape, stealing, murder, assault, slander, and fraud. These standards also include those that enjoin common virtues such as honesty, compassion, and loyalty",
     "What sha'll we do with the drunken sailor?",
-    "Want to keep track of your progress and type more diverse prompts? Sign in or create an account to save your stats!",
     "The only way to do great work is to love what you do.",
     "Success is not final, failure is not fatal: It is the courage to continue that counts.",
     "The best way to predict the future is to create it."
@@ -27,34 +28,44 @@ export function buildAccuracyMap() {
 }
 
 export function getGameText() {
+    console.log(prompts[0]);
     const selectedText = TEXTS[Math.floor(Math.random() * TEXTS.length)];
     return selectedText.split('');
 }
 
-export function mapGameText(facts) {
+export function mapGameText() {
     let text = "";
-    const punctuation = ['.', '!', '?'];
+    const punctuation = [
+      '.',
+      '.',
+      '.',
+      '.',
+      '.',
+      '!',
+      '!',
+      '?'
+    ];
 
-    for (let i = 0; i < facts.length; i++) {
-      let fact = facts[i].prompt;
-      let end = fact[fact.length-1];
-      text += fact;
+    let random = Math.random();
+    let count = random < 0.6 ? 2 : 3;
 
+    while (count > 0) {
+      const prompt = prompts[Math.floor(Math.random() * prompts.length)];
+      let end = prompt[prompt.length-1];
+      text += prompt;
+      
       if (!punctuation.includes(end) && end !== '"') 
         text += punctuation[Math.floor(Math.random() * punctuation.length)]; 
-      if (i !== facts.length-1) 
+      if (count !== 1) 
         text += ' ';
+      count--;
     }
     
     const badCharacters = ['|', '~', '`', '@', '\\'];
-    const converted = text.split('');
-    converted.map((char) => {
-      if (badCharacters.includes(char)) 
-        return '';
-      return char;
-    });
-      
-    return converted;
+    const regex = new RegExp(`[${badCharacters.join('\\')}]`, 'g'); // Escape special characters
+    const result = text.replace(regex, "");
+    
+    return result.split('');
 }
 
 export function getCurrentState(pointer, index, incorrect) {

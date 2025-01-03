@@ -10,7 +10,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Cross
 } from 'recharts';
 import './LineChartComponent.css';
 
@@ -33,6 +32,7 @@ function transformData(data) {
 }
 
 function LineChartComponent({data}) {
+ 
   return (
     <ResponsiveContainer width="100%" height="100%" minWidth={100}>
       <LineChart
@@ -50,7 +50,6 @@ function LineChartComponent({data}) {
         <Legend />
         <Line type="monotone" dataKey="WPM" stroke="#8b5cf6"/>
         <Line type="monotone" dataKey="WPM/s" stroke="#82ca9d" />
-        <Cross />
       </LineChart>
     </ResponsiveContainer>
   );

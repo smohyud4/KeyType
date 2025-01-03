@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {buildAccuracyMap, getGameText, getCurrentState, calculateWPM} from '../../utils/typing'
+import {mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import './Typing.css';
 
@@ -54,23 +54,9 @@ export default function Typing() {
     setCurrWpm(wpm);
   } 
 
-  function updateCharAccuracies(char, correct) {
-    setCharAccuracies(prev => {
-      const newCharAccuracies = {...prev};
-      let charData = newCharAccuracies[char];
-      if (correct) {
-        charData.correct += 1;
-        charData.total += 1;
-      }
-      else {
-        charData.correct -= 1;
-      }
-      return newCharAccuracies;
-    });
-  }
-
   function init() {
-    setCharAccuracies(buildAccuracyMap());
+    setStatShow(false);
+    setCharAccuracies({});
     setCurrWpm(0);
     setCurrAccuracy(0);
     setInProgress(true);
@@ -78,7 +64,7 @@ export default function Typing() {
     mistakes.current = [];
     wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
   
-    const newText = getGameText();
+    const newText = mapGameText();
     setText(newText);
   }
 
@@ -106,7 +92,7 @@ export default function Typing() {
 
     if (key === text[pointerRef.current]) {
      
-      updateCharAccuracies(key, true);
+      setCharAccuracies({});
    
       correctRef.current = false;
       pointerRef.current += 1;
@@ -131,8 +117,7 @@ export default function Typing() {
             wrongRef.current += 1;
             mistakes.current.push(pointerRef.current);
             correctRef.current = true;
-            let char = text[pointerRef.current];
-            updateCharAccuracies(char, false);
+            setCharAccuracies({});
         }
     }
   }

@@ -18,8 +18,6 @@ export default function Stats({
   text 
 }) {
 
-  console.log('mistakes', mistakeIndeces);
-
   return (
     <>
       <aside className="race-stats">
