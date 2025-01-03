@@ -6,10 +6,9 @@ import Stats from '../Stats/Stats';
 import './Typing.css';
 
 // eslint-disable-next-line react/prop-types
-export default function Typing({isUserSignedIn}) {
+export default function Typing() {
 
   const [inProgress, setInProgress] = useState(false);
-  const [statsLoaded, setStatsLoaded] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
   const [statShow, setStatShow] = useState(false);
   const [text, setText] = useState("Press start to play!".split(''));
@@ -23,6 +22,7 @@ export default function Typing({isUserSignedIn}) {
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
   const correctRef = useRef(false);
+  const mistakes = useRef([]);
   const wrongRef = useRef(0);
   const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
 
@@ -74,23 +74,12 @@ export default function Typing({isUserSignedIn}) {
     setCurrWpm(0);
     setCurrAccuracy(0);
     setInProgress(true);
-    setStatsLoaded(false);
+    wrongRef.current = 0;
+    mistakes.current = [];
     wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
-    if (!isUserSignedIn) {
-      setStatShow(false);
-      const newText = getGameText();
-      setText(newText);
-    }
-  }
-
-  function startGame() {
-    if (!isUserSignedIn) { 
-      init();
-    }
-    else {
-      setStatShow(false);
-      setText("Loading...".split(''));
-    }
+  
+    const newText = getGameText();
+    setText(newText);
   }
 
   function resetGame() {
@@ -98,7 +87,6 @@ export default function Typing({isUserSignedIn}) {
     startTimeRef.current = null;
     pointerRef.current = 0;
     correctRef.current = false;
-    wrongRef.current = 0;
     setStartTime(null);
     setStatShow(true);
     setSeeCurrStats(false);
@@ -141,6 +129,7 @@ export default function Typing({isUserSignedIn}) {
     else if (key !== "Shift") {
         if (!correctRef.current) {
             wrongRef.current += 1;
+            mistakes.current.push(pointerRef.current);
             correctRef.current = true;
             let char = text[pointerRef.current];
             updateCharAccuracies(char, false);
@@ -173,22 +162,20 @@ export default function Typing({isUserSignedIn}) {
           />
         </section>
       ) : (
-        statsLoaded || !isUserSignedIn ? (
-          <Stats 
-            wpm={currWpm} 
-            accuracy={currAccuracy} 
-            charsTyped={text.length} 
-            mistakes={text.length-text.length*(currAccuracy/100)}
-            data={wpmHistoryRef.current}
-          >
-          </Stats>
-        ) : (
-          <div className="loader"></div>
-        )
+        <Stats 
+          wpm={currWpm} 
+          accuracy={currAccuracy} 
+          charsTyped={text.length} 
+          mistakes={wrongRef.current}
+          mistakeIndeces={mistakes.current}
+          data={wpmHistoryRef.current}
+          text={text}
+        >
+        </Stats>
       )}
       </div>
       {!inProgress && 
-        <button id='start-button' onClick={startGame}>
+        <button id='start-button' onClick={init}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
       }

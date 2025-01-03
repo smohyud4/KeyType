@@ -28,13 +28,7 @@ export function buildAccuracyMap() {
 
 export function getGameText() {
     const selectedText = TEXTS[Math.floor(Math.random() * TEXTS.length)];
-    const textArray = Array.from(selectedText);
-    const converted = textArray.map((char, index) => {
-      if (index === 0) return { character: char, currState: 'current'};
-      return { character: char, currState: ''}
-    });
-
-    return converted;
+    return selectedText.split('');
 }
 
 export function mapGameText(facts) {
@@ -52,15 +46,14 @@ export function mapGameText(facts) {
         text += ' ';
     }
     
-    const textArray = Array.from(text);
-    const converted = textArray.map((char, index) => {
-      if (char === '|' || char === '~' || char === '`' || char === '@' || char === '\\') { 
-        return { character: ' ', currState: ''};
-      }
-      if (index === 0) return { character: char, currState: 'current'};
-      return { character: char, currState: ''}
+    const badCharacters = ['|', '~', '`', '@', '\\'];
+    const converted = text.split('');
+    converted.map((char) => {
+      if (badCharacters.includes(char)) 
+        return '';
+      return char;
     });
-
+      
     return converted;
 }
 

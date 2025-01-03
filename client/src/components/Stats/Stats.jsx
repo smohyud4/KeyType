@@ -8,7 +8,17 @@ import { RxCross1 } from "react-icons/rx";
 import LineChartComponent from '../LineChart/LineChartComopnent';
 import './Stats.css';
 
-export default function Stats({ wpm, accuracy, charsTyped, mistakes, data }) {
+export default function Stats({
+  wpm, 
+  accuracy, 
+  charsTyped, 
+  mistakes,
+  mistakeIndeces,
+  data,
+  text 
+}) {
+
+  console.log('mistakes', mistakeIndeces);
 
   return (
     <>
@@ -23,7 +33,7 @@ export default function Stats({ wpm, accuracy, charsTyped, mistakes, data }) {
         </header>
         <header className="race-header">
          <RiCharacterRecognitionLine className="stat-icon"/>
-         <h2>Chars Typed: {Math.round(charsTyped)}</h2>
+         <h2>Characters: {Math.round(charsTyped)}</h2>
         </header>
         <header className="race-header">
          <RxCross1 className="stat-icon"/>
@@ -32,6 +42,13 @@ export default function Stats({ wpm, accuracy, charsTyped, mistakes, data }) {
       </aside>
       <article className="stats-container">
         <LineChartComponent data={data}/>
+      </article>
+      <article className="word-container">
+        {text.map((char, index) => (
+          <span key={index} className={mistakeIndeces.includes(index) ? 'missed' : ''}> 
+            {char}
+          </span>
+        ))}
       </article>
     </>
   )

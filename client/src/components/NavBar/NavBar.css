@@ -58,7 +58,7 @@
 }
 
 
-#register-button {
+.nav .link-button {
     background-color: hsl(240, 46%, 57%);
     font-size: 1rem;
 }

@@ -24,6 +24,7 @@ export default function PracticeTyping() {
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
   const correctRef = useRef(false);
+  const mistakes = useRef([]);
   const wrongRef = useRef(0);
   const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
 
@@ -55,11 +56,10 @@ export default function PracticeTyping() {
   } 
 
   useEffect(() => {
-    const handleKeyDownWrapper = (event) => handleKeyDown(event);
-    if (inProgress) document.addEventListener('keydown', handleKeyDownWrapper, true);
+    if (inProgress) document.addEventListener('keydown', handleKeyDown, true);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDownWrapper, true);
+      document.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [inProgress]);
 
@@ -78,6 +78,8 @@ export default function PracticeTyping() {
 
       setCharAccuracies(buildAccuracyMap()); 
 
+      wrongRef.current = 0;
+      mistakes.current = [];
       setInProgress(true);
       setStatShow(false);
       wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
@@ -101,7 +103,6 @@ export default function PracticeTyping() {
     startTimeRef.current = null;
     pointerRef.current = 0;
     correctRef.current = false;
-    wrongRef.current = 0;
     setStartTime(null);
     setStatShow(true);
     setSeeCurrStats(false);
@@ -143,6 +144,7 @@ export default function PracticeTyping() {
     else if (key !== "Shift") {
         if (!correctRef.current) {
             wrongRef.current += 1;
+            mistakes.current.push(pointerRef.current);
             correctRef.current = true;
             let char = text[pointerRef.current];
             updateCharAccuracies(char, false);
@@ -180,8 +182,10 @@ export default function PracticeTyping() {
           wpm={currWpm} 
           accuracy={currAccuracy} 
           charsTyped={text.length} 
-          mistakes={text.length-text.length*(currAccuracy/100)}
+          mistakes={wrongRef.current}
+          mistakeIndeces={mistakes.current}
           data={wpmHistoryRef.current}
+          text={text}
         >
         </Stats>
       )}

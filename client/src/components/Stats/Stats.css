@@ -35,7 +35,7 @@
  }
 
 .race-stats {
-    height: 350px;
+    height: 50vh;
     width: 20%;
     min-width: 150px;
     padding: 1.5rem;
@@ -51,7 +51,7 @@
   
 .stats-container {
   width: 50%;
-  height: 350px; /* Make the width a percentage of the parent element */
+  height: 50vh; /* Make the width a percentage of the parent element */
   max-width: 1200px; /* Set a maximum width to prevent it from getting too wide */
   min-width: 300px;
   padding: 1.5rem;
@@ -59,4 +59,17 @@
   background: #17141d30;
   border-radius: 16px;
 }
-  
+
+.word-container {
+  width: 70%;
+  text-align: center;
+  color: white;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.word-container .missed {
+  color: rgb(129, 129, 240);
+  text-decoration: underline;
+}

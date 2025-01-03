@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Cross
 } from 'recharts';
 import './LineChartComponent.css';
 
@@ -27,7 +28,7 @@ function transformData(data) {
   if (data.length > 20) {
     return data.filter((_, index) => index % 2 === 0 || index === data.size-1);
   }
-  
+
   return data;
 }
 
@@ -47,8 +48,9 @@ function LineChartComponent({data}) {
         <YAxis />
         <Tooltip content={<CustomTooltip />} />
         <Legend />
-        <Line type="monotone" dataKey="WPM" stroke="#8b5cf6" />
+        <Line type="monotone" dataKey="WPM" stroke="#8b5cf6"/>
         <Line type="monotone" dataKey="WPM/s" stroke="#82ca9d" />
+        <Cross />
       </LineChart>
     </ResponsiveContainer>
   );
