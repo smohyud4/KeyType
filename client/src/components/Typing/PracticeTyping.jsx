@@ -89,10 +89,7 @@ export default function PracticeTyping() {
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2, inputData.capitals))
         :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
         
-      setText(array.map((char, index) => {
-        if (index == 0) return { character: char, currState: 'current'};
-        return { character: char, currState: ''}
-      }))
+      setText(array);
     }
     else {
       setInputData({...inputData, error: error});
@@ -121,7 +118,7 @@ export default function PracticeTyping() {
       setStartTime(now);
     }
 
-    if (key === text[pointerRef.current].character) {
+    if (key === text[pointerRef.current]) {
      
       updateCharAccuracies(key, true);
    
@@ -148,7 +145,7 @@ export default function PracticeTyping() {
             wrongRef.current += 1;
             correctRef.current = true;
             let char = text[pointerRef.current];
-            updateCharAccuracies(char.character, false);
+            updateCharAccuracies(char, false);
         }
     }
   }
@@ -159,13 +156,13 @@ export default function PracticeTyping() {
       <div className='container-typing'>
       {!statShow ? (
         <div className='wrapper-typing'>
-          {text.map((element, index) => (
+          {text.map((char, index) => (
             <span 
               key={index} 
               id={index.toString()} 
               className={getCurrentState(pointerRef.current, index, correctRef.current)}
             >
-              {element.character}
+              {char}
             </span>
           ))}
           <hr/>

@@ -1,10 +1,14 @@
+main {
+    height: 60vh;
+    min-height: fit-content;
+}
 .container-typing {
     display: flex;
+    width: 100%;
     justify-content: center;
     align-items: center;
     min-height: 50vh;
     font-family: Inconsolata, monospace;
-    margin-top: 3rem;
 }
 
 .wrapper-typing {

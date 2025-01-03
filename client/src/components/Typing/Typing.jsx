@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {buildAccuracyMap, getGameText, mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
-import axios from 'axios';
+import {buildAccuracyMap, getGameText, getCurrentState, calculateWPM} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import './Typing.css';
 
@@ -13,7 +12,7 @@ export default function Typing({isUserSignedIn}) {
   const [statsLoaded, setStatsLoaded] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
   const [statShow, setStatShow] = useState(false);
-  const [text, setText] = useState("Press start to play!".split('').map(char => ({character: char, currState: ''})));
+  const [text, setText] = useState("Press start to play!".split(''));
   const [currWpm, setCurrWpm] = useState(0);
 
   const [currAccuracy, setCurrAccuracy] = useState(0);
@@ -26,6 +25,22 @@ export default function Typing({isUserSignedIn}) {
   const correctRef = useRef(false);
   const wrongRef = useRef(0);
   const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
+
+  useEffect(() => {
+    if (inProgress) document.addEventListener('keydown', handleKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [inProgress]);
+
+  useEffect(() => {
+    if (inProgress) {
+      const intervalId = setInterval(updateWPM, 1000);
+      //console.log('intervalId', intervalId);
+      return () => clearInterval(intervalId);
+    }
+  }, [startTime]); 
 
   function updateWPM() {
     const currentTime = new Date();
@@ -54,66 +69,6 @@ export default function Typing({isUserSignedIn}) {
     });
   }
 
-  useEffect(() => {
-
-    async function uploadStats() {
-      try {
-        const chars = Object.entries(charAccuracies).filter(([_, data]) => data.total > 0);
-        console.log(chars);
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await axios.patch(`${apiUrl}/race`, {currWpm, currAccuracy, chars}, {withCredentials: true});
-
-        if (response.data.error) {
-          console.log(response.data.error);
-          return;
-        }
-
-        setStatsLoaded(true);
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }
-
-    if (statShow && isUserSignedIn) uploadStats();    
-
-  }, [statShow]);
-
-  useEffect(() => {
-    const handleKeyDownWrapper = (event) => handleKeyDown(event);
-    if (inProgress) document.addEventListener('keydown', handleKeyDownWrapper, true);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDownWrapper, true);
-    };
-  }, [inProgress]);
-
-  useEffect(() => {
-    if (inProgress) {
-      const intervalId = setInterval(updateWPM, 1000);
-      //console.log('intervalId', intervalId);
-      return () => clearInterval(intervalId);
-    }
-  }, [startTime]); 
-  
-  async function fetchText() {
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await axios.get(`${apiUrl}/random-text`, {withCredentials: true});
-      if (response.data.error) {
-        console.log(response.data.error);
-        setText(getGameText());
-        return;
-      }
-      const facts = response.data.text;
-      setText(mapGameText(facts));
-    }
-    catch (error) {
-      console.log(error);
-      setText(getGameText());
-    }
-  }
-
   function init() {
     setCharAccuracies(buildAccuracyMap());
     setCurrWpm(0);
@@ -134,12 +89,7 @@ export default function Typing({isUserSignedIn}) {
     }
     else {
       setStatShow(false);
-      setText("Loading...".split('').map(char => ({character: char, currState: ''})));
-      fetchText().then(() => {
-        init();
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      setText("Loading...".split(''));
     }
   }
 
@@ -166,7 +116,7 @@ export default function Typing({isUserSignedIn}) {
       setStartTime(now);
     }
 
-    if (key === text[pointerRef.current].character) {
+    if (key === text[pointerRef.current]) {
      
       updateCharAccuracies(key, true);
    
@@ -193,7 +143,7 @@ export default function Typing({isUserSignedIn}) {
             wrongRef.current += 1;
             correctRef.current = true;
             let char = text[pointerRef.current];
-            updateCharAccuracies(char.character, false);
+            updateCharAccuracies(char, false);
         }
     }
   }
@@ -203,13 +153,13 @@ export default function Typing({isUserSignedIn}) {
       <div className='container-typing'>
       {!statShow ? (
         <section className='wrapper-typing'>
-          {text.map((element, index) => (
+          {text.map((char, index) => (
             <span 
               key={index} 
               id={index.toString()} 
               className={getCurrentState(pointerRef.current, index, correctRef.current)}
             >
-              {element.character}
+              {char}
             </span>
           ))}
           <hr/> 
