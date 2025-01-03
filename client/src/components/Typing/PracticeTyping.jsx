@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useState, useEffect, useRef} from 'react';
 import {generate} from 'random-words';
-import {buildAccuracyMap, getCurrentState, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
+import {getCurrentState, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
 import './Typing.css';
@@ -40,21 +40,6 @@ export default function PracticeTyping() {
     setCurrWpm(wpm);
   } 
 
-  function updateCharAccuracies(char, correct) {
-    setCharAccuracies(prev => {
-      const newCharAccuracies = {...prev};
-      let charData = newCharAccuracies[char];
-      if (correct) {
-        charData.correct += 1;
-        charData.total += 1;
-      }
-      else {
-        charData.correct -= 1;
-      }
-      return newCharAccuracies;
-    });
-  } 
-
   useEffect(() => {
     if (inProgress) document.addEventListener('keydown', handleKeyDown, true);
 
@@ -76,7 +61,7 @@ export default function PracticeTyping() {
     if (!inputData.dictionary) error = validateInput(inputData.key1, inputData.key2);
     if (error == "None" || error == null) {
 
-      setCharAccuracies(buildAccuracyMap()); 
+      setCharAccuracies({}); 
 
       wrongRef.current = 0;
       mistakes.current = [];
@@ -121,7 +106,7 @@ export default function PracticeTyping() {
 
     if (key === text[pointerRef.current]) {
      
-      updateCharAccuracies(key, true);
+      setCharAccuracies({}); 
    
       correctRef.current = false;
       pointerRef.current += 1;
@@ -146,8 +131,7 @@ export default function PracticeTyping() {
             wrongRef.current += 1;
             mistakes.current.push(pointerRef.current);
             correctRef.current = true;
-            let char = text[pointerRef.current];
-            updateCharAccuracies(char, false);
+            setCharAccuracies({}); 
         }
     }
   }
