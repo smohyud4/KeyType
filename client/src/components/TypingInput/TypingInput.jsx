@@ -59,13 +59,6 @@ export default function TypingInput({data, setData}) {
               placeholder="Enter another key"
               onChange={handleChange}
             />
-            <label>Upper Case</label>
-            <input
-              type="checkbox"
-              name="capitals"
-              checked={data.capitals}
-              onChange={handleChange}
-            />
           </>
         )}
       </section>

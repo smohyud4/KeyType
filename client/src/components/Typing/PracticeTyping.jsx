@@ -10,7 +10,7 @@ import './Typing.css';
 // eslint-disable-next-line react/prop-types
 export default function PracticeTyping() {
 
-  const [inputData, setInputData] = useState({key1: '', key2: '', error: '', capitals: false, dictionary: false}); 
+  const [inputData, setInputData] = useState({key1: '', key2: '', error: '', dictionary: false}); 
   const [inProgress, setInProgress] = useState(false);
   const [statShow, setStatShow] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
@@ -73,7 +73,7 @@ export default function PracticeTyping() {
       setInputData({...inputData, error: ''});
 
       const array = !inputData.dictionary
-        ?  Array.from(generatePracticeText(inputData.key1, inputData.key2, inputData.capitals))
+        ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
         :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
         
       setText(array);

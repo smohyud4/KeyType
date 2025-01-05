@@ -1,4 +1,5 @@
 import prompts from './prompts.json';
+import {generate} from 'random-words';
 
 const TEXTS = [
     "There once was a man from nantucket.",
@@ -97,17 +98,25 @@ export function validateInput(key1, key2) {
     return "None";
 }
 
-export function generatePracticeText(key1, key2, capitals) {
+export function generatePracticeText(key1, key2) {
     let str = "";
     const words = Math.floor(Math.random() * 6) + 20;
 
     for (let i = 0; i < words; i++) {
       const length = Math.floor(Math.random() * 4) + 2;
       for (let j = 0; j < length; j++) {
-        if (Math.random() < 0.5) 
-          j === 0 && capitals ? str += key1.toUpperCase() : str += key1;
-        else 
-          j === 0 && capitals ? str += key2.toUpperCase() : str += key2;
+        const random = Math.random();
+        if (random > 0.6) {
+          str += key1;
+        }
+        else if (random > 0.2) {
+          str += key2;
+        }
+        else {
+          const word = generate({minLength: 2, maxLength: 4});
+          str += word
+          j += word.length-1;
+        }
       }
       str += " ";
     }
