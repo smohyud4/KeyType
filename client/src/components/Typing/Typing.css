@@ -75,6 +75,12 @@ main {
   outline: none;
 }
 
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .loader {
   scale: 2;
   width: 50px;
@@ -89,4 +95,10 @@ main {
           mask-composite: intersect;
   animation: l5 1s infinite;
 }
-@keyframes l5 {to{transform: rotate(.5turn)}} 
+@keyframes l5 {to{transform: rotate(.5turn)}}
+
+@media screen and (max-width: 600px) {
+    .wrapper-typing {
+        width: 90%;
+    }
+}

@@ -5,6 +5,7 @@ import {mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import './Typing.css';
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // eslint-disable-next-line react/prop-types
 export default function Typing() {
 
@@ -19,6 +20,7 @@ export default function Typing() {
   const [startTime, setStartTime] = useState(null);
   const [charAccuracies, setCharAccuracies] = useState({});
 
+  const inputRef = useRef(null);
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
   const correctRef = useRef(false);
@@ -27,7 +29,11 @@ export default function Typing() {
   const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
 
   useEffect(() => {
-    if (inProgress) document.addEventListener('keydown', handleKeyDown, true);
+    if (inProgress) {
+      isMobile
+        ? inputRef.current.focus()
+        : document.addEventListener('keydown', handleKeyDown, true);
+    }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
@@ -63,6 +69,7 @@ export default function Typing() {
     wrongRef.current = 0;
     mistakes.current = [];
     wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
+    if (isMobile) inputRef.current.focus(); 
   
     const newText = mapGameText();
     setText(newText);
@@ -142,8 +149,21 @@ export default function Typing() {
           <input
             type="checkbox"
             name="currStats"
-            onChange={() => setSeeCurrStats(!seeCurrStats)}
+            onChange={() => {
+              setSeeCurrStats(!seeCurrStats);
+              if (isMobile) inputRef.current.focus();
+            }}
             title='Show current stats'
+          />
+          <input
+            type="text"
+            ref={inputRef}
+            className="hidden-input"
+            onKeyDown={(event) => {
+              event.preventDefault();
+              handleKeyDown(event)
+            }}
+            autoComplete="off"
           />
         </section>
       ) : (

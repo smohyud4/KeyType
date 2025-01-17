@@ -7,6 +7,7 @@ import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
 import './Typing.css';
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // eslint-disable-next-line react/prop-types
 export default function PracticeTyping() {
 
@@ -21,6 +22,7 @@ export default function PracticeTyping() {
   const [startTime, setStartTime] = useState(null);
   const [charAccuracies, setCharAccuracies] = useState({});
 
+  const inputRef = useRef(null);
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
   const correctRef = useRef(false);
@@ -41,7 +43,11 @@ export default function PracticeTyping() {
   } 
 
   useEffect(() => {
-    if (inProgress) document.addEventListener('keydown', handleKeyDown, true);
+    if (inProgress) {
+      isMobile
+        ? inputRef.current.focus()
+        : document.addEventListener('keydown', handleKeyDown, true);
+    }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
@@ -71,6 +77,7 @@ export default function PracticeTyping() {
       setCurrWpm(0);
       setCurrAccuracy(0);
       setInputData({...inputData, error: ''});
+      if (isMobile) inputRef.current.focus(); 
 
       const array = !inputData.dictionary
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
@@ -157,8 +164,21 @@ export default function PracticeTyping() {
           <input
             type="checkbox"
             name="currStats"
-            onChange={() => setSeeCurrStats(!seeCurrStats)}
+            onChange={() => {
+              setSeeCurrStats(!seeCurrStats);
+              if (isMobile) inputRef.current.focus();
+            }}
             title='Show current stats'
+          />
+          <input
+            type="text"
+            ref={inputRef}
+            className="hidden-input"
+            onKeyDown={(event) => {
+              event.preventDefault();
+              handleKeyDown(event)
+            }}
+            autoComplete="off"
           />
         </div>
       ) : (

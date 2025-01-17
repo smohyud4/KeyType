@@ -73,3 +73,23 @@
   color: rgb(129, 129, 240);
   text-decoration: underline;
 }
+
+@media screen and (max-width: 600px) {
+  .race-stats {
+    width: 100%;
+    height: 8vh;
+    font-size: 0.9rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .stat-icon {
+    font-size: medium;
+    margin: none;
+  }
+
+  .word-container {
+    font-size: 1.2rem;
+  }
+}
