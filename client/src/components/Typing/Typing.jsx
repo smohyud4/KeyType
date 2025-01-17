@@ -69,7 +69,6 @@ export default function Typing() {
     wrongRef.current = 0;
     mistakes.current = [];
     wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
-    if (isMobile) inputRef.current.focus(); 
   
     const newText = mapGameText();
     setText(newText);

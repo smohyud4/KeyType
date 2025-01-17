@@ -77,7 +77,6 @@ export default function PracticeTyping() {
       setCurrWpm(0);
       setCurrAccuracy(0);
       setInputData({...inputData, error: ''});
-      if (isMobile) inputRef.current.focus(); 
 
       const array = !inputData.dictionary
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
