@@ -4,6 +4,7 @@ import {Route, Routes} from 'react-router-dom';
 import Race from './pages/Race';
 import Practice from './pages/Practice';
 import Footer from './components/Footer/Footer';
+import Account from './pages/Account';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path='/' element={<Race/>}/>
         <Route path='/race' element={<Race/>}/>
         <Route path='/practice' element={<Practice/>}></Route>
+        <Route path='/stats' element={<Account/>}></Route>
       </Routes>
       <Footer/>
     </>

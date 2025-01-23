@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
+import {buildAccuracyMap, mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
+import { saveStats, loadStats, updateStats } from '../../utils/storage';
 import Stats from '../Stats/Stats';
 import './Typing.css';
 
@@ -27,6 +28,27 @@ export default function Typing() {
   const mistakes = useRef([]);
   const wrongRef = useRef(0);
   const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
+
+  useEffect(() => {
+    if (!loadStats()) {
+      const defaultStats = {
+        races: 0, 
+        WPM: 0,
+        bestWPM: 0,
+        accuracy: 0,
+        charAccuracies: buildAccuracyMap()
+      }
+      saveStats(defaultStats);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (statShow) {
+      const stats = loadStats();
+      updateStats(stats, currWpm, currAccuracy, charAccuracies);
+      console.log('hello');
+    }
+  }, [statShow])
 
   useEffect(() => {
     if (inProgress) {
@@ -58,11 +80,26 @@ export default function Typing() {
       "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
     });
     setCurrWpm(wpm);
-  } 
+  }
+  
+  function updateCharAccuracies(char, correct) {
+    setCharAccuracies(prev => {
+      const newCharAccuracies = {...prev};
+      let charData = newCharAccuracies[char];
+      if (correct) {
+        charData.correct += 1;
+        charData.total += 1;
+      }
+      else {
+        charData.correct -= 1;
+      }
+      return newCharAccuracies;
+    });
+  }
 
   function init() {
     setStatShow(false);
-    setCharAccuracies({});
+    setCharAccuracies(buildAccuracyMap());
     setCurrWpm(0);
     setCurrAccuracy(0);
     setInProgress(true);
@@ -98,7 +135,7 @@ export default function Typing() {
 
     if (key === text[pointerRef.current]) {
      
-      setCharAccuracies({});
+      updateCharAccuracies(key, true);
    
       correctRef.current = false;
       pointerRef.current += 1;
@@ -123,7 +160,8 @@ export default function Typing() {
             wrongRef.current += 1;
             mistakes.current.push(pointerRef.current);
             correctRef.current = true;
-            setCharAccuracies({});
+            let char = text[pointerRef.current];
+            updateCharAccuracies(char, false);
         }
     }
   }
@@ -179,7 +217,7 @@ export default function Typing() {
       )}
       </div>
       {!inProgress && 
-        <button id='start-button' onClick={init}>
+        <button id='start-button' onClick={() => init()}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
       }

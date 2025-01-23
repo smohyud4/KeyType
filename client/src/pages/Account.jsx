@@ -1,9 +1,7 @@
 /* eslint-disable no-unused-vars */
 import {useState, useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import { loadStats } from '../utils/storage';
 import NavBar from '../components/NavBar/NavBar';
-import Footer from '../components/Footer/Footer';
 import KeyBoard from '../components/KeyBoard/KeyBoard';
 import './Account.css';
 
@@ -17,17 +15,12 @@ const rowThreeCaps = `ASDFGHJKL:"`;
 const rowFourCaps = "ZXCVBNM<>?";
 
 export default function Account() {
-  const [auth, setAuth] = useState(false);
-  const [error, setError] = useState('');
   const [dataProcessed, setDataProcessed] = useState(false);
-  const navigate = useNavigate();
- 
   const [data, setData] = useState({
     races: '', 
     WPM: '',
     bestWPM: '',
     accuracy: '',
-    user: '',
     charAccuracies: ''
   });
 
@@ -42,33 +35,16 @@ export default function Account() {
     rowFourUpper: [],
     space: []
   });
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${apiUrl}/account`, {withCredentials: true});
-        if (response.data.error) {
-          setAuth(false);
-          setError(response.data.error);
-          console.log(response.data.error);
-          return;
-        }
-
-        setData(response.data);
-        setAuth(true);
-      }
-      catch {
-        setAuth(false);
-        navigate('../login');
-      }
-    }
-    checkAuth();
-  }, [navigate]);
   
   useEffect(() => {
-    if (data.charAccuracies) {
-      const charAccuracies = data.charAccuracies;
+    const stats = loadStats();
+    if (stats) {
+      setData(stats);
+      console.log(stats);
+      const charAccuracies = Object.entries(stats.charAccuracies).map(([character, stats]) => ({
+        character,
+        ...stats,
+      }));
 
       let rowOneLower = charAccuracies.filter((entry) => rowOne.includes(entry.character));
       rowOneLower.sort((a, b) => rowOne.indexOf(a.character) - rowOne.indexOf(b.character));
@@ -108,57 +84,50 @@ export default function Account() {
 
       setDataProcessed(true);
     }
-  }, [data]);
+  }, []);
 
 
   return (
     <>
-      <NavBar isUserSignedIn={auth} user={data.user}/>
-      {
-        auth ?
-          <main>
-           <section className='auth'>
-              <header>
-                <h2>Total Races: {data.races}</h2>
-              </header>
+      <NavBar/>
+      <main>
+        <section className='auth'>
+          <header>
+            <h2>Total Races: {data.races}</h2>
+          </header>
       
-              <section className="profile-container">
-                <article className="profile-card">
-                  <h3>{data.races === 0 ? 0 : Math.round(data.WPM / data.races)}</h3>
-                  <p>WPM</p>
-                </article>
-                <article className="profile-card">
-                  <h3>{Math.round(data.bestWPM)}</h3>
-                  <p>Best WPM</p>
-                </article>
-                <article className="profile-card">
-                  <h3>{data.races === 0 ? 0 : (data.accuracy / data.races).toFixed(2)}%</h3>
-                  <p>Accuracy</p>
-                </article>
-              </section>
-            </section>
+          <section className="profile-container">
+            <article className="profile-card">
+              <h3>{data.races === 0 ? 0 : Math.round(data.WPM / data.races)}</h3>
+              <p>WPM</p>
+            </article>
+            <article className="profile-card">
+              <h3>{Math.round(data.bestWPM)}</h3>
+              <p>Best WPM</p>
+            </article>
+            <article className="profile-card">
+              <h3>{data.races === 0 ? 0 : (data.accuracy / data.races).toFixed(2)}%</h3>
+               <p>Accuracy</p>
+            </article>
+          </section>
+        </section>
 
-            <section className="key-container">
-              {dataProcessed && (
-                <KeyBoard
-                  rowOneVals={accuracyData.rowOneLower}
-                  rowTwoVals={accuracyData.rowTwoLower}
-                  rowThreeVals={accuracyData.rowThreeLower}
-                  rowFourVals={accuracyData.rowFourLower}
-                  rowOneCaps={accuracyData.rowOneUpper}
-                  rowTwoCaps={accuracyData.rowTwoUpper}
-                  rowThreeCaps={accuracyData.rowThreeUpper}
-                  rowFourCaps={accuracyData.rowFourUpper}
-                  space={accuracyData.space}
-                />
-              )}
-            </section>
-          </main>
-        : 
-        <main id='loader-container'>
-          <div className="loader"></div>
-        </main>
-      }
+        <section className="key-container">
+            {dataProcessed && (
+              <KeyBoard
+                rowOneVals={accuracyData.rowOneLower}
+                rowTwoVals={accuracyData.rowTwoLower}
+                rowThreeVals={accuracyData.rowThreeLower}
+                rowFourVals={accuracyData.rowFourLower}
+                rowOneCaps={accuracyData.rowOneUpper}
+                rowTwoCaps={accuracyData.rowTwoUpper}
+                rowThreeCaps={accuracyData.rowThreeUpper}
+                rowFourCaps={accuracyData.rowFourUpper}
+                space={accuracyData.space}
+              />
+            )}
+        </section>
+      </main>
     </>
   )
 } 

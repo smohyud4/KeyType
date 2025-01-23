@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { IoStatsChart } from "react-icons/io5";
 import './NavBar.css';
 
 export default function Navbar() {
@@ -15,6 +16,13 @@ export default function Navbar() {
           <li>
             <button className="link-button">
               <a href='/practice'>Practice</a>
+            </button>
+          </li>
+          <li>
+            <button className="link-button">
+              <a href='/stats'>
+                Stats <IoStatsChart id="statIcon"/>
+              </a>
             </button>
           </li>
         </ul>

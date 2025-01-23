@@ -6,13 +6,13 @@ export default function KeyRow({rowVals, background}) {
     <>
       {rowVals.map((val,index)=>{
         let accuracy = "N/A";
-        if (val.total_typed > 0) {
-          accuracy = `${((val.total_correct / val.total_typed)*100).toFixed(2)}%`;
+        if (val.total > 0) {
+          accuracy = `${((val.correct / val.total)*100).toFixed(2)}%`;
         }
         return(
           <li 
             key={index} 
-            style={{backgroundColor: background(val.total_correct, val.total_typed)}}
+            style={{backgroundColor: background(val.correct, val.total)}}
           >
             {val.character}
             <div className="tooltip">

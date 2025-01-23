@@ -79,7 +79,7 @@ export default function KeyBoard({
        <ul>
         <li 
           id="spaceBtn" 
-          style={{backgroundColor: getBackgroundColor(space[0].total_correct, space[0].total_typed)}}
+          style={{backgroundColor: getBackgroundColor(space[0].correct, space[0].total)}}
         >
           space
           <div className="tooltip">
