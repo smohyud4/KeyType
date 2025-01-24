@@ -13,10 +13,10 @@
 
 .keyBoardContainer ul{
   width: 90%;
-  min-height: 10vh;
+  min-height: 5vh;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
   list-style: none;
   margin: 2px;
 }
@@ -88,5 +88,37 @@ li:hover p {
   -2px -2px 12px 0 rgba(255, 255, 255, 0.3);
 }
 
+
+@media (max-width: 680px) {
+
+  .keyBoardContainer ul {
+    width: 100%;
+  }
+
+  #rowOne, #rowTwo {
+    width: 95%;
+  }
+  
+  #rowThree{
+    width: 90%;
+  }
+  #rowFour{
+    width: 85%;
+  }
+
+  .keyBoardContainer #spaceBtn{
+    justify-content: center;
+  }
+
+  .keyBoardContainer ul li {
+      height: 36px;
+      width: 6vw;
+      min-width: 6vw;
+      font-size: 80%;
+      margin: 1px; /* Reduce button spacing if needed */
+      border-radius: 5px;
+  }
+  
+}
 
 

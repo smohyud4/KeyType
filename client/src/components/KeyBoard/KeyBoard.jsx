@@ -52,7 +52,7 @@ export default function KeyBoard({
           shift
         </li>
        </ul>
-      <ul>
+      <ul id="rowOne">
         {!caps  
           ? <KeyRow rowVals={rowOneVals} background={getBackgroundColor}/> 
           : <KeyRow rowVals={rowOneCaps} background={getBackgroundColor}/>

@@ -80,12 +80,34 @@ img {
     background-color: rgb(166, 84, 237); /* Spacing */
 }
 
-@media screen and (max-width: 600px) {
-    .nav {
-        gap: 1rem;
+@media screen and (min-width: 400px) and (max-width: 600px) {
+
+    .nav .link-button {
+        font-size: 0.8rem;
     }
 
     .nav ul {
         gap: 0.7rem;
     }
 }
+
+@media screen and (max-width: 400px) {
+
+    .nav {
+        gap: 1rem;
+        padding: 0 0.5rem;
+        justify-content: center;
+    }
+
+    .nav > h1 {
+        display: none;
+    }
+
+    .nav ul {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+        gap: 0.5rem;
+    }
+}
+
