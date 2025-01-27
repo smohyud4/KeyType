@@ -83,8 +83,8 @@ export default function KeyBoard({
         >
           space
           <div className="tooltip">
-            {space[0].total_typed > 0 
-              ? <p>{((space[0].total_correct / space[0].total_typed) * 100).toFixed(2)}%</p>
+            {space[0].total > 0 
+              ? <p>{((space[0].correct / space[0].total) * 100).toFixed(2)}%</p>
               : <p>N/A</p>
           }   
           </div>
