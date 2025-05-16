@@ -5,6 +5,7 @@ import {generate} from 'random-words';
 import {getCurrentState, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
+import { VscDebugRestart } from "react-icons/vsc";
 import './Typing.css';
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -15,13 +16,12 @@ export default function PracticeTyping() {
   const [inProgress, setInProgress] = useState(false);
   const [statShow, setStatShow] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
-  const [text, setText] = useState([]);
   const [currWpm, setCurrWpm] = useState(0);
   const [currAccuracy, setCurrAccuracy] = useState(0);
-
   const [startTime, setStartTime] = useState(null);
   const [charAccuracies, setCharAccuracies] = useState({});
 
+  const textRef = useRef([]);
   const inputRef = useRef(null);
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
@@ -82,7 +82,7 @@ export default function PracticeTyping() {
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
         :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
         
-      setText(array);
+      textRef.current = array;
     }
     else {
       setInputData({...inputData, error: error});
@@ -97,7 +97,15 @@ export default function PracticeTyping() {
     setStartTime(null);
     setStatShow(true);
     setSeeCurrStats(false);
-  } 
+  }
+  
+  function handleRestart() {
+    startTimeRef.current = null;
+    pointerRef.current = 0;
+    correctRef.current = false;
+    setStartTime(null);
+    startGame();
+  }
 
   function handleKeyDown(event) {
     const key = event.key;
@@ -110,16 +118,16 @@ export default function PracticeTyping() {
       setStartTime(now);
     }
 
-    if (key === text[pointerRef.current]) {
-     
+    if (key === textRef.current[pointerRef.current]) {
+
       setCharAccuracies({}); 
-   
+     
       correctRef.current = false;
       pointerRef.current += 1;
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
       setCurrAccuracy(accuracy);
 
-      if (pointerRef.current == text.length) {
+      if (pointerRef.current == textRef.current.length) {
         const newEndTime = new Date();
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
@@ -148,7 +156,7 @@ export default function PracticeTyping() {
       <div className='container-typing'>
       {!statShow ? (
         <div className='wrapper-typing'>
-          {text.map((char, index) => (
+          {textRef.current.map((char, index) => (
             <span 
               key={index} 
               id={index.toString()} 
@@ -184,20 +192,25 @@ export default function PracticeTyping() {
         <Stats 
           wpm={currWpm} 
           accuracy={currAccuracy} 
-          charsTyped={text.length} 
+          charsTyped={textRef.current.length} 
           mistakes={wrongRef.current}
           mistakeIndeces={mistakes.current}
           data={wpmHistoryRef.current}
-          text={text}
+          text={textRef.current}
         >
         </Stats>
       )}
       </div>
-      {!inProgress && 
+      {!inProgress && (
         <button id='start-button' onClick={startGame}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
-      }
+      )}
+      {inProgress && startTime && (
+        <button id='start-button' onClick={handleRestart}>
+          <VscDebugRestart/>
+        </button>
+      )}
     </>
   );
 } 

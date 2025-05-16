@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
-import {buildAccuracyMap, mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
+import {buildAccuracyMap, getGameText, mapGameText, getCurrentState, calculateWPM} from '../../utils/typing'
 import { saveStats, loadStats, updateStats } from '../../utils/storage';
+import { VscDebugRestart } from "react-icons/vsc";
 import Stats from '../Stats/Stats';
 import './Typing.css';
 
@@ -13,14 +14,12 @@ export default function Typing() {
   const [inProgress, setInProgress] = useState(false);
   const [seeCurrStats, setSeeCurrStats] = useState(false);
   const [statShow, setStatShow] = useState(false);
-  const [text, setText] = useState("Press start to play!".split(''));
   const [currWpm, setCurrWpm] = useState(0);
-
   const [currAccuracy, setCurrAccuracy] = useState(0);
-
   const [startTime, setStartTime] = useState(null);
   const [charAccuracies, setCharAccuracies] = useState({});
 
+  const textRef = useRef("Press start to play!".split(''));
   const inputRef = useRef(null);
   const startTimeRef = useRef(null);
   const pointerRef = useRef(0);
@@ -46,7 +45,6 @@ export default function Typing() {
     if (statShow) {
       const stats = loadStats();
       updateStats(stats, currWpm, currAccuracy, charAccuracies);
-      console.log('hello');
     }
   }, [statShow])
 
@@ -63,10 +61,13 @@ export default function Typing() {
   }, [inProgress]);
 
   useEffect(() => {
-    if (inProgress) {
-      const intervalId = setInterval(updateWPM, 1000);
-      //console.log('intervalId', intervalId);
-      return () => clearInterval(intervalId);
+    let intervalId;
+    if (inProgress && startTime) {
+      intervalId = setInterval(updateWPM, 1000);
+    }
+
+    return () => {
+      clearInterval(intervalId);
     }
   }, [startTime]); 
 
@@ -108,7 +109,7 @@ export default function Typing() {
     wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
   
     const newText = mapGameText();
-    setText(newText);
+    textRef.current = newText;
   }
 
   function resetGame() {
@@ -121,8 +122,15 @@ export default function Typing() {
     setSeeCurrStats(false);
   } 
 
-  function handleKeyDown(event) {
+  function handleRestart() {
+    startTimeRef.current = null;
+    pointerRef.current = 0;
+    correctRef.current = false;
+    setStartTime(null);
+    init();
+  }
 
+  function handleKeyDown(event) {
     const key = event.key;
     if (key === "Backspace") return;
     if (key === ' '  || event.keyCode === 32) event.preventDefault();
@@ -133,7 +141,7 @@ export default function Typing() {
       setStartTime(now);
     }
 
-    if (key === text[pointerRef.current]) {
+    if (key === textRef.current[pointerRef.current]) {
      
       updateCharAccuracies(key, true);
    
@@ -142,7 +150,7 @@ export default function Typing() {
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
       setCurrAccuracy(accuracy);
 
-      if (pointerRef.current == text.length) {
+      if (pointerRef.current == textRef.current.length) {
         const newEndTime = new Date();
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
@@ -160,7 +168,7 @@ export default function Typing() {
             wrongRef.current += 1;
             mistakes.current.push(pointerRef.current);
             correctRef.current = true;
-            let char = text[pointerRef.current];
+            let char = textRef.current[pointerRef.current];
             updateCharAccuracies(char, false);
         }
     }
@@ -171,7 +179,7 @@ export default function Typing() {
       <div className='container-typing'>
       {!statShow ? (
         <section className='wrapper-typing'>
-          {text.map((char, index) => (
+          {textRef.current.map((char, index) => (
             <span 
               key={index} 
               id={index.toString()} 
@@ -207,20 +215,25 @@ export default function Typing() {
         <Stats 
           wpm={currWpm} 
           accuracy={currAccuracy} 
-          charsTyped={text.length} 
+          charsTyped={textRef.current.length} 
           mistakes={wrongRef.current}
           mistakeIndeces={mistakes.current}
           data={wpmHistoryRef.current}
-          text={text}
+          text={textRef.current}
         >
         </Stats>
       )}
       </div>
-      {!inProgress && 
-        <button id='start-button' onClick={() => init()}>
+      {!inProgress && (
+        <button id='start-button' onClick={init}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
-      }
+      )}
+      {inProgress && startTime && (
+        <button id='start-button' onClick={handleRestart}>
+          <VscDebugRestart/>
+        </button>
+      )}
     </>
   );
 } 

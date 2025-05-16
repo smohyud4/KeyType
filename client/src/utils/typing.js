@@ -6,16 +6,8 @@ const TEXTS = [
     "The quick brown fox jumps over the lazy dog.",
     "Ocean man, take me by the hand, lead me to the land that you understand.",
     "The rain in Spain falls mainly on the plain.",
-    "Want to keep track of your progress and type more diverse prompts? Sign in or create an account to save your stats!",
-    "The slow black wolf burrowed under the energetic cat.",
-    "The AI-powered code completion tool GitHub Copilot generated over 82 billion lines of code within its first year.",
-    "Artificial Intelligence has profoundly influenced our everyday lives, and this influence continues to expand.",
-    "What is the difference between right and wrong? Good and evil? Do these concepts exist on a spectrum? A powerful tool that can help guide these questions is ethics. At its core, ethics encompasses all facets of society, dictating what humans ought to do. For example, ethics provide the standards that impose reasonable obligations from common vices such as rape, stealing, murder, assault, slander, and fraud. These standards also include those that enjoin common virtues such as honesty, compassion, and loyalty",
-    "What sha'll we do with the drunken sailor?",
-    "The only way to do great work is to love what you do.",
-    "Success is not final, failure is not fatal: It is the courage to continue that counts.",
-    "The best way to predict the future is to create it."
-]; 
+    "A journey of a thousand miles begins with a single step.",
+];
 
 export const characters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()[]{}_+=-;':,.<>/?" `
 
