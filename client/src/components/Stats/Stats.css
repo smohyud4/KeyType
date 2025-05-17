@@ -35,13 +35,11 @@
  }
 
 .race-stats {
-    height: 50vh;
-    width: 20%;
-    min-width: 150px;
+    width: 90%;
+    min-width: 280px;
     padding: 1.5rem;
-    background: transparent;
     display: flex;
-    flex-direction: column;
+    justify-content: space-evenly;
     transition: .2s;
     margin: 0;
     scroll-snap-align: start;
@@ -51,14 +49,13 @@
   
 .stats-container {
   display: flex;
-  width: 80%;
-  height: 50vh; 
+  width: 90%;
   max-width: 1200px; 
-  min-width: 300px;
-  padding: 1.5rem;
+  padding: min(8px, 3vw);
   text-align: center;
   background: #17141d30;
   border-radius: 16px;
+  height: auto;
 }
 
 .word-container {
@@ -77,13 +74,10 @@
 
 @media screen and (max-width: 600px) {
   .race-stats {
-    width: 100%;
+    flex-direction: column;
     height: 8vh;
     font-size: 0.9rem;
-    justify-content: center;
-    align-items: center;
   }
-
 
   .stat-icon {
     font-size: medium;
@@ -92,5 +86,9 @@
 
   .word-container {
     font-size: 1.2rem;
+  }
+
+  .stats-container {
+    flex-direction: column;
   }
 }

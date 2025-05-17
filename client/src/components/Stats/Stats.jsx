@@ -26,19 +26,7 @@ export default function Stats({
         <LineChartComponent data={data}/>
         <BarChartComponent data={barData}/>
       </article>
-      <article className="word-container">
-        {text.map((char, index) => (
-          <span key={index} className={mistakeIndeces.includes(index) ? 'missed' : ''}> 
-            {char}
-          </span>
-        ))}
-      </article>
-    </>
-  )
-}
-
-/*
-<aside className="race-stats">
+      <aside className="race-stats">
         <header className="race-header">
          <SlSpeedometer className="stat-icon"/>
          <h2>WPM: {Math.round(wpm)}</h2>
@@ -56,6 +44,13 @@ export default function Stats({
          <h2>Mistakes: {Math.round(mistakes)}</h2>
         </header>
       </aside>
-
-
-*/
+      <aside className="word-container">
+        {text.map((char, index) => (
+          <span key={index} className={mistakeIndeces.includes(index) ? 'missed' : ''}> 
+            {char}
+          </span>
+        ))}
+      </aside>
+    </>
+  )
+}

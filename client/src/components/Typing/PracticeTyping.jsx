@@ -73,7 +73,7 @@ export default function PracticeTyping() {
       const wpm = calculateWPM(prevTime, timeStamps.current[index], numIndex - prevIndex + 1);
 
       segmentData.current.push({
-        name: `Segment ${segment}`,
+        name: isMobile ? segment : `Segment ${segment}`,
         segment: textRef.current.slice(prevIndex, numIndex+1).join(''),
         WPM: wpm
       });

@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-
 import {
   LineChart,
   Line,
@@ -33,21 +32,19 @@ function transformData(data) {
 function LineChartComponent({data}) {
  
   return (
-    <ResponsiveContainer width="100%" height="100%" minWidth={100}>
+    <ResponsiveContainer width="100%" height={350} minWidth={100}>
       <LineChart
         width={500}
         height={300}
         data={transformData(data)}
-        margin={{
-          right: 30,
-        }}
+        margin={{ top: 20, right: 30, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip content={<CustomTooltip />} />
         <Legend />
-        <Line type="monotone" dataKey="WPM" stroke="#8b5cf6"/>
+        <Line type="monotone" dataKey="WPM" stroke="#5f5fc4"/>
       </LineChart>
     </ResponsiveContainer>
   );
