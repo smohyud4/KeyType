@@ -13,6 +13,9 @@
   font-weight: 400; /* Space between the paragraphs */
 }
 
+.chart-label .text-label {
+  font-size: 14px;
+}
 
 #wpm {
   color: #8b5cf6; /* Highlight the WPM value in gold */

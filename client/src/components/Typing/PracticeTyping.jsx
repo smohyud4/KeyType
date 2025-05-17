@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {useState, useEffect, useRef} from 'react';
 import {generate} from 'random-words';
-import {getCurrentState, calculateWPM, validateInput, generatePracticeText} from '../../utils/typing'
+import {getCurrentState, calculateWPM, validateInput, generatePracticeText, getIndices} from '../../utils/typing'
 import Stats from '../Stats/Stats';
 import TypingInput from '../TypingInput/TypingInput';
 import { VscDebugRestart } from "react-icons/vsc";
@@ -28,19 +28,9 @@ export default function PracticeTyping() {
   const correctRef = useRef(false);
   const mistakes = useRef([]);
   const wrongRef = useRef(0);
-  const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
-
-  function updateWPM() {
-    const currentTime = new Date();
-    const charactersTyped = pointerRef.current; // Use the ref value
-    const wpm = calculateWPM(startTimeRef.current, currentTime, charactersTyped);
-    wpmHistoryRef.current.push({
-      name: wpmHistoryRef.current.length, 
-      WPM: wpm, 
-      "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
-    });
-    setCurrWpm(wpm);
-  } 
+  const timeStamps = useRef({});
+  const segmentData = useRef([]);
+  const wpmHistoryRef = useRef([{name: 0, WPM: 0}]);
 
   useEffect(() => {
     if (inProgress) {
@@ -60,7 +50,39 @@ export default function PracticeTyping() {
       //console.log('intervalId', intervalId);
       return () => clearInterval(intervalId);
     }
-  }, [startTime]);  
+  }, [startTime]);
+  
+  function updateWPM() {
+    const currentTime = new Date();
+    const charactersTyped = pointerRef.current; // Use the ref value
+    const wpm = calculateWPM(startTimeRef.current, currentTime, charactersTyped);
+    wpmHistoryRef.current.push({
+      name: wpmHistoryRef.current.length, 
+      WPM: wpm
+    });
+    setCurrWpm(wpm);
+  }
+  
+  function setSegmentData() {
+    let prevTime = startTimeRef.current;
+    let prevIndex = 0;
+    let segment = 1;
+
+    for (const index in timeStamps.current) {
+      const numIndex = parseInt(index);
+      const wpm = calculateWPM(prevTime, timeStamps.current[index], numIndex - prevIndex + 1);
+
+      segmentData.current.push({
+        name: `Segment ${segment}`,
+        segment: textRef.current.slice(prevIndex, numIndex+1).join(''),
+        WPM: wpm
+      });
+      
+      prevTime = timeStamps.current[index];
+      prevIndex = numIndex + 1;
+      segment += 1;
+    }
+  }
 
   function startGame() {
     let error = null;
@@ -73,7 +95,8 @@ export default function PracticeTyping() {
       mistakes.current = [];
       setInProgress(true);
       setStatShow(false);
-      wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
+      wpmHistoryRef.current = [{name: 0, WPM: 0}];
+      segmentData.current = [];
       setCurrWpm(0);
       setCurrAccuracy(0);
       setInputData({...inputData, error: ''});
@@ -82,6 +105,7 @@ export default function PracticeTyping() {
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
         :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
         
+      timeStamps.current = getIndices(array.join(''));
       textRef.current = array;
     }
     else {
@@ -94,6 +118,7 @@ export default function PracticeTyping() {
     startTimeRef.current = null;
     pointerRef.current = 0;
     correctRef.current = false;
+    timeStamps.current = {};
     setStartTime(null);
     setStatShow(true);
     setSeeCurrStats(false);
@@ -120,8 +145,12 @@ export default function PracticeTyping() {
 
     if (key === textRef.current[pointerRef.current]) {
 
-      setCharAccuracies({}); 
-     
+      setCharAccuracies({});
+      
+      if (pointerRef.current in timeStamps.current) {
+        timeStamps.current[pointerRef.current] = new Date();
+      } 
+
       correctRef.current = false;
       pointerRef.current += 1;
       let accuracy = (((pointerRef.current-wrongRef.current) / pointerRef.current) * 100);
@@ -129,13 +158,14 @@ export default function PracticeTyping() {
 
       if (pointerRef.current == textRef.current.length) {
         const newEndTime = new Date();
+        timeStamps.current[pointerRef.current] = newEndTime;
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
         wpmHistoryRef.current.push({
           name: wpmHistoryRef.current.length, 
-          WPM: wpm, 
-          "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
+          WPM: wpm
         });
+        setSegmentData();
         resetGame();
       }
     
@@ -196,17 +226,17 @@ export default function PracticeTyping() {
           mistakes={wrongRef.current}
           mistakeIndeces={mistakes.current}
           data={wpmHistoryRef.current}
+          barData={segmentData.current}
           text={textRef.current}
         >
         </Stats>
       )}
       </div>
-      {!inProgress && (
+      {!inProgress ? (
         <button id='start-button' onClick={startGame}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
-      )}
-      {inProgress && startTime && (
+      ) : (
         <button id='start-button' onClick={handleRestart}>
           <VscDebugRestart/>
         </button>

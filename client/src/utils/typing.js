@@ -57,8 +57,8 @@ export function mapGameText() {
     const badCharacters = ['|', '~', '`', '@', '\\'];
     const regex = new RegExp(`[${badCharacters.join('\\')}]`, 'g'); // Escape special characters
     const result = text.replace(regex, "");
-    
-    return result.split('');
+
+    return [result.split(''), getIndices(result)];
 }
 
 export function getCurrentState(pointer, index, incorrect) {
@@ -114,4 +114,27 @@ export function generatePracticeText(key1, key2) {
     }
 
     return str.trim();
+}
+
+export function getIndices(result) {
+
+    function findClosestSpace(index, result) {
+      let right = result.slice(index).indexOf(' ');
+      let left = index - (result.slice(0, index).lastIndexOf(' '));
+
+      return left <= right ? index - left : right + index;
+    }
+
+    const indices = {};
+    const incr = Math.floor(result.length / 5);
+
+    let index = incr;
+    for (let i=0; i < 4; i++) {
+      let val = findClosestSpace(index, result);
+      indices[val] = -1;
+      index = val;
+      index += incr;
+    }
+
+    return indices;
 }

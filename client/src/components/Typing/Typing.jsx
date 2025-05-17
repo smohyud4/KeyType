@@ -26,7 +26,9 @@ export default function Typing() {
   const correctRef = useRef(false);
   const mistakes = useRef([]);
   const wrongRef = useRef(0);
-  const wpmHistoryRef = useRef([{name: 0, WPM: 0, "WPM/s": 0 }]);
+  const timeStamps = useRef({});
+  const segmentData = useRef([]);
+  const wpmHistoryRef = useRef([{name: 0, WPM: 0}]);
 
   useEffect(() => {
     if (!loadStats()) {
@@ -77,8 +79,7 @@ export default function Typing() {
     const wpm = calculateWPM(startTimeRef.current, currentTime, charactersTyped);
     wpmHistoryRef.current.push({
       name: wpmHistoryRef.current.length, 
-      WPM: wpm, 
-      "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
+      WPM: wpm
     });
     setCurrWpm(wpm);
   }
@@ -98,6 +99,28 @@ export default function Typing() {
     });
   }
 
+  function setSegmentData() {
+    let prevTime = startTimeRef.current;
+    let prevIndex = 0;
+    let segment = 1;
+
+    for (const index in timeStamps.current) {
+      const numIndex = parseInt(index);
+      const wpm = calculateWPM(prevTime, timeStamps.current[index], numIndex - prevIndex + 1);
+
+      segmentData.current.push({
+        name: `Segment ${segment}`,
+        segment: textRef.current.slice(prevIndex, numIndex+1).join(''),
+        WPM: wpm
+      });
+      
+      prevTime = timeStamps.current[index];
+      prevIndex = numIndex + 1;
+      segment += 1;
+    }
+
+  }
+
   function init() {
     setStatShow(false);
     setCharAccuracies(buildAccuracyMap());
@@ -106,9 +129,11 @@ export default function Typing() {
     setInProgress(true);
     wrongRef.current = 0;
     mistakes.current = [];
-    wpmHistoryRef.current = [{name: 0, WPM: 0, "WPM/s": 0}];
+    wpmHistoryRef.current = [{name: 0, WPM: 0}];
+    segmentData.current = [];
   
-    const newText = mapGameText();
+    const [newText, indices]  = mapGameText();
+    timeStamps.current = indices;
     textRef.current = newText;
   }
 
@@ -117,6 +142,7 @@ export default function Typing() {
     startTimeRef.current = null;
     pointerRef.current = 0;
     correctRef.current = false;
+    timeStamps.current = {};
     setStartTime(null);
     setStatShow(true);
     setSeeCurrStats(false);
@@ -144,6 +170,10 @@ export default function Typing() {
     if (key === textRef.current[pointerRef.current]) {
      
       updateCharAccuracies(key, true);
+
+      if (pointerRef.current in timeStamps.current) {
+        timeStamps.current[pointerRef.current] = new Date();
+      } 
    
       correctRef.current = false;
       pointerRef.current += 1;
@@ -152,15 +182,16 @@ export default function Typing() {
 
       if (pointerRef.current == textRef.current.length) {
         const newEndTime = new Date();
+        timeStamps.current[pointerRef.current] = newEndTime;
         const wpm = calculateWPM(startTimeRef.current, newEndTime, pointerRef.current);
         setCurrWpm(wpm);
         wpmHistoryRef.current.push({
           name: wpmHistoryRef.current.length, 
-          WPM: wpm, 
-          "WPM/s": wpm-wpmHistoryRef.current[wpmHistoryRef.current.length-1].WPM
+          WPM: wpm
         });
+        setSegmentData();
         resetGame();
-      }
+      } 
     
     }
     else if (key !== "Shift") {
@@ -219,17 +250,17 @@ export default function Typing() {
           mistakes={wrongRef.current}
           mistakeIndeces={mistakes.current}
           data={wpmHistoryRef.current}
+          barData={segmentData.current}
           text={textRef.current}
         >
         </Stats>
       )}
       </div>
-      {!inProgress && (
+      {!inProgress ? (
         <button id='start-button' onClick={init}>
           {statShow ? 'Race Again' : 'Start'}
         </button>
-      )}
-      {inProgress && startTime && (
+      ) : (
         <button id='start-button' onClick={handleRestart}>
           <VscDebugRestart/>
         </button>
