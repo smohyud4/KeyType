@@ -26,7 +26,7 @@ export function getGameText() {
     return selectedText.split('');
 }
 
-export function mapGameText() {
+export function mapGameText(sections = 5) {
     let text = "";
     const punctuation = [
       '.',
@@ -58,7 +58,7 @@ export function mapGameText() {
     const regex = new RegExp(`[${badCharacters.join('\\')}]`, 'g'); // Escape special characters
     const result = text.replace(regex, "");
 
-    return [result.split(''), getIndices(result)];
+    return [result.split(''), getIndices(result, sections)];
 }
 
 export function getCurrentState(pointer, index, incorrect) {
@@ -116,7 +116,7 @@ export function generatePracticeText(key1, key2) {
     return str.trim();
 }
 
-export function getIndices(result) {
+export function getIndices(result, sections) {
 
     function findClosestSpace(index, result) {
       let right = result.slice(index).indexOf(' ');
@@ -126,10 +126,10 @@ export function getIndices(result) {
     }
 
     const indices = {};
-    const incr = Math.floor(result.length / 5);
+    const incr = Math.floor(result.length / sections);
 
     let index = incr;
-    for (let i=0; i < 4; i++) {
+    for (let i=0; i < sections-1; i++) {
       let val = findClosestSpace(index, result);
       indices[val] = -1;
       index = val;

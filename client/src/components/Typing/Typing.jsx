@@ -132,7 +132,7 @@ export default function Typing() {
     wpmHistoryRef.current = [{name: 0, WPM: 0}];
     segmentData.current = [];
   
-    const [newText, indices]  = mapGameText();
+    const [newText, indices]  = mapGameText(6);
     timeStamps.current = indices;
     textRef.current = newText;
   }

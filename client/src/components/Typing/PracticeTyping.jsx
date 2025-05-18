@@ -105,7 +105,7 @@ export default function PracticeTyping() {
         ?  Array.from(generatePracticeText(inputData.key1, inputData.key2))
         :  Array.from(generate({ min: 20, max: 30, maxLength: 6, join: ' '}));
         
-      timeStamps.current = getIndices(array.join(''));
+      timeStamps.current = getIndices(array.join(''), 6);
       textRef.current = array;
     }
     else {
