@@ -3,7 +3,6 @@ import {Route, Routes} from 'react-router-dom';
 //import NavBar from './components/NavBar'
 import Race from './pages/Race';
 import Practice from './pages/Practice';
-import Footer from './components/Footer/Footer';
 import Account from './pages/Account';
 import './App.css';
 
@@ -17,7 +16,6 @@ function App() {
         <Route path='/practice' element={<Practice/>}></Route>
         <Route path='/stats' element={<Account/>}></Route>
       </Routes>
-      <Footer/>
     </>
   )
 }
